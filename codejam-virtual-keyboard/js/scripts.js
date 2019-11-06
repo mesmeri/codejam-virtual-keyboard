@@ -71,6 +71,7 @@ window.addEventListener("load", function() {
     capsLock: false,
     shiftPressed: false,
     language: localStorage.getItem("lang") || "ru",
+    inputField: field,
     data: [
       ["changeable", "Backquote", ["ё", "`"]],
       ["numeric", "Digit1", ["1", "!"]],
@@ -140,5 +141,7 @@ window.addEventListener("load", function() {
 
   };
 
+  field.classList.add("field");
+  document.body.prepend(field);
 
 });
