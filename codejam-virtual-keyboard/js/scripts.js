@@ -34,7 +34,6 @@ window.addEventListener("load", function() {
       this.currentValue = isUpperCase
         ? this.currentValue.toUpperCase()
         : this.currentValue.toLowerCase();
-      console.log(this.currentValue);
     }
   }
 
@@ -43,8 +42,7 @@ window.addEventListener("load", function() {
     constructor(arr) {
       super(arr);
 
-      [this.defaultValue, this.shiftedValue] = arr[2];
-      this.currentValue = this.defaultValue;
+      [this.currentValue, this.shiftedValue] = arr[2];
     }
 
     changeValue() {
@@ -199,7 +197,6 @@ window.addEventListener("load", function() {
       } else {
         return;
       }
-
       this.targetObject = this.keys[this.targetCode];
 
       switch (this.targetCode) {
@@ -236,7 +233,11 @@ window.addEventListener("load", function() {
           }
 
         default:
-          this.output += this.targetObject.currentValue;
+          if (this.shiftPressed && this.targetObject.type === "numeric") {
+            this.output += this.targetObject.shiftedValue;
+          } else {
+            this.output += this.targetObject.currentValue;
+          }
       }
 
       if (this.targetCode !== "CapsLock") {
@@ -294,4 +295,5 @@ window.addEventListener("load", function() {
   field.classList.add("field");
   document.body.prepend(field);
 
+  keyboard.initialize();
 });
