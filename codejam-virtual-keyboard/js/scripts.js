@@ -139,6 +139,83 @@ window.addEventListener("load", function() {
     targetCode: null,
     targetObject: null,
 
+    initialize() {
+      const wrapper = document.createElement("div");
+      const container = document.createElement("div");
+
+      this.data.forEach(arr => {
+        let element = document.createElement("button");
+        let code = arr[1];
+
+        element.dataset.code = code;
+
+        switch (arr[0]) {
+          case "changeable":
+            this.keys[code] = new ChangeableKey(arr);
+            this.lettersCodes.push(code);
+
+            break;
+
+          case "numeric":
+            this.keys[code] = new NumericKey(arr);
+            element.innerHTML = `<span class="key-top">${this.keys[arr[1]].shiftedValue}</span>`;
+
+            break;
+
+          case "service":
+            this.keys[code] = new ServiceKey(arr);
+            element.classList.add(this.keys[arr[1]].sizeClass);
+
+            break;
+        }
+
+        element.classList.add("key");
+
+        element.append(document.createTextNode(this.keys[code].currentValue));
+        container.append(element);
+      });
+
+      wrapper.addEventListener("mousedown", this.eventStartHandler.bind(this));
+      wrapper.addEventListener("mouseup", this.eventEndHandler.bind(this));
+      document.addEventListener("keydown", this.eventStartHandler.bind(this));
+      document.addEventListener("keyup", this.eventEndHandler.bind(this));
+
+      wrapper.classList.add("keyboard");
+      container.classList.add("keyboard-container");
+
+      wrapper.prepend(container);
+      document.body.prepend(wrapper);
+    },
+
+    print() {
+      this.inputField.value = this.output;
+    },
+
+    toggleCapsLock() {
+      this.capsLock = !this.capsLock;
+
+      console.log("this capslock", this.capsLock);
+
+      for (code of this.lettersCodes) {
+        this.keys[code].changeRegistry(this.capsLock);
+        this.changeChar(code);
+      }
+    },
+
+    toggleLanguage() {
+      this.language = this.language === "ru" ? "en" : "ru";
+      localStorage.setItem("lang", this.language);
+
+      for (code of this.lettersCodes) {
+        this.keys[code].changeLanguage(this.language, this.capsLock);
+        this.changeChar(code);
+      }
+    },
+
+    changeChar(code) {
+      let node = document.querySelector(`[data-code="${code}"]`);
+      node.firstChild.data = this.keys[code].currentValue;
+    }
   };
 
   field.classList.add("field");
