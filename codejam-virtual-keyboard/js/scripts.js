@@ -187,6 +187,79 @@ window.addEventListener("load", function() {
       document.body.prepend(wrapper);
     },
 
+    eventStartHandler(evt) {
+      evt.preventDefault();
+
+      if (evt.code) {
+        this.target = document.querySelector(`[data-code="${evt.code}"]`);
+        this.targetCode = evt.code;
+      } else if (evt.target.tagName === "BUTTON") {
+        this.target = evt.target;
+        this.targetCode = this.target.dataset.code;
+      } else {
+        return;
+      }
+
+      this.targetObject = this.keys[this.targetCode];
+
+      switch (this.targetCode) {
+        case "Backspace":
+          this.output = this.output.substring(0, this.output.length - 1);
+          break;
+
+        case "Tab":
+          this.output += "  ";
+          break;
+
+        case "CapsLock":
+          this.toggleCapsLock();
+          this.target.classList.toggle("active");
+          break;
+
+        case "Enter":
+          this.output += "\n";
+          break;
+
+        case "ShiftLeft":
+        case "ShiftRight":
+          this.shiftPressed = true;
+          break;
+
+        case "Space":
+          this.output += " ";
+          break;
+
+        case "AltLeft":
+        case "AltRight":
+          if (this.shiftPressed) {
+            this.toggleLanguage();
+          }
+
+        default:
+          this.output += this.targetObject.currentValue;
+      }
+
+      if (this.targetCode !== "CapsLock") {
+        this.target.classList.add("active");
+      }
+
+      this.print();
+    },
+
+    eventEndHandler(evt) {
+      evt.preventDefault();
+
+      if (this.shiftPressed) {
+        this.shiftPressed = false;
+      }
+
+      if (this.targetCode !== "CapsLock") {
+        this.target.classList.remove("active");
+      }
+
+      this.target = null;
+    },
+
     print() {
       this.inputField.value = this.output;
     },
